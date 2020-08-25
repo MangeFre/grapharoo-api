@@ -4,6 +4,7 @@
   "description": "The API of the Grapharoo project",
   "main": "index.js",
   "scripts": {
+    "start": "node test.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -16,5 +17,11 @@
   "bugs": {
     "url": "https://github.com/MangeFre/grapharoo-api/issues"
   },
-  "homepage": "https://github.com/MangeFre/grapharoo-api#readme"
+  "homepage": "https://github.com/MangeFre/grapharoo-api#readme",
+  "dependencies": {
+    "btoa": "^1.2.1",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "node-fetch": "^2.6.0"
+  }
 }
