@@ -1,6 +1,18 @@
 # grapharoo-api
 The API of the Grapharoo project
 
+# How to run
+
+In this moment, the API can be run in your environment (hopefully). Just follow these steps.
+1. Open this in Visual Studio Code.
+2. Run NPM install to get all your dependencies.
+3. Run 'npm start' in the console. This will spit out a link.
+4. Copy said link and assign the variable "testLink" to it (found in the main function of test.js).
+
+Now repeat step 3 and you should get the next link. And so on...
+
+Let me know if it seems to break in some cases. Feel free to make any changes + restructure code (maybe rewrite test.js to a lib file or something along those lines).
+
 ## ELI5: Ol' Reddit Switch-a-roo
 As the user CedarWolf [wrote in a response](https://www.reddit.com/r/explainlikeimfive/comments/17140d/eli5_ol_reddit_switcharoo/c8186iz?utm_source=share&utm_medium=web2x&context=3), 7 years ago:
 'In posts and comment threads on subreddits like [r/pics](https://www.reddit.com/r/pics/), there's an old joke where someone will post a picture of themselves with someone easily recognizable or famous. Then, invariably, someone will reply "Wow, {famous person's name}, I didn't know you were {at location, redditor's username, etc}. But who's that person you met today?"
