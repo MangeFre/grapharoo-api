@@ -61,7 +61,7 @@ function findCommentInPostJson(dataAsJson){
 }
 
 async function main(){
-    const testLink = 'https://www.reddit.com/r/toiletpaperusa/comments/ifap8u/_/g2nunjn?context=2'
+    const testLink = 'https://www.reddit.com/r/nyc/comments/ifd65i/new_friends_on_my_fire_escape/g2nl50x/?context=2'
     
     // This is the whole page as data. It's not really what we want.
     const data = await getPostAsJson(testLink);

@@ -1,0 +1,74 @@
+const express = require('express');
+const fetch = require('node-fetch');
+
+const app = express();
+const port = 5797;
+
+const defaultUrl = 'https://www.reddit.com/r/nyc/comments/ifd65i/new_friends_on_my_fire_escape/g2nl50x/?context=2';
+
+app.listen(port, () => {
+    console.log(`API Test started at http://localhost:${port}`);
+});
+
+app.get('/', async (req, res, next) => {
+    let url = req.query.url;
+    if (isBlank(url)) {
+        url = defaultUrl;
+    }
+    // This is the whole page as data. It's not really what we want.
+    const data = await getPostAsJson(url);
+
+    // Gets the comment "body" - the actual text value of the comment.
+    const comment = findCommentInPostJson(data);
+
+    const indexOfHttp = comment.indexOf('(http');
+
+    // Don't want the ( so we add one.
+    const link = indexOfHttp > -1 ? comment.substring(indexOfHttp + 1) : 'No Link Found'
+
+    // This link will have a ) at the end. We find it and remove it.
+    const trimmedLink = link.substring(0, link.indexOf(')'));
+
+    res.send(trimmedLink);
+});
+
+function isBlank(str) {
+    return (!str || /^\s*$/.test(str));
+}
+
+function trimLink(link){
+    // Think this regex will split on / and ?
+    const URLarray = link.split(/[/?]/);
+
+    // The 'interesting' part is 7 characters long, always, however we don't know where it is....
+    const linkEndOfInterestArray = URLarray.filter((possibleFullname) => {
+        return (possibleFullname.length === 7) 
+    });
+
+    // MOST LIKELY this is enough for now but... Yeah. Not sure how to check for it.
+    const linkEndOfInterest = linkEndOfInterestArray[linkEndOfInterestArray.length - 1];
+
+    // A little wonky, but will return the correct substring
+    const trimmedLink = link.substring(0, (link.indexOf(linkEndOfInterest) + 7));
+    return trimmedLink;
+}
+
+
+async function getPostAsJson(link) {
+    const trimmedLink = trimLink(link);
+    const jsonLink = trimmedLink + '.json';
+    const response = await fetch(jsonLink, {
+        'Content-Type': 'application/json'
+    });
+
+    const data = response.json();
+    return data;
+}
+
+// A post contains a lot of stuff. This aims to find the comment of interest
+// Returns it as a json object.
+function findCommentInPostJson(dataAsJson) {
+    const postComments = dataAsJson[1];
+    const commentBody = postComments.data.children[0].data.body
+    return commentBody;
+}
