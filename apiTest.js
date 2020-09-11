@@ -23,19 +23,24 @@ app.post('/url', async (req, res, next) => {
 		// This is the whole page as data. It's not really what we want.
 		const data = await getPostAsJson(url);
 
-		// Gets the comment "body" - the actual text value of the comment.
-		const comment = findCommentInPostJson(data);
+		// Gets the comment - All the juicy data we may want.
+		const comment = getCommentInPostDataJson(data);
 
-		const indexOfHttp = comment.indexOf('(http');
-
+		// This is just the text of the comment - perfect to extract the next link from.
+		const commentBody = comment.body;
+		const indexOfHttp = commentBody.indexOf('(http');
 		// Don't want the ( so we add one.
 		const link =
-			indexOfHttp > -1 ? comment.substring(indexOfHttp + 1) : 'No Link Found';
-
+			indexOfHttp > -1
+				? commentBody.substring(indexOfHttp + 1)
+				: 'No Link Found';
 		// This link will have a ) at the end. We find it and remove it.
 		const trimmedLink = link.substring(0, link.indexOf(')'));
 
-		res.json({ url: trimmedLink });
+		// Some fun properties in the comment.
+		const { subreddit_name_prefixed, score, author } = comment;
+
+		res.json({ url: trimmedLink, subreddit_name_prefixed, score, author });
 	} catch (err) {
 		res.status(500).send(`Error: ${err}`);
 	}
@@ -84,8 +89,8 @@ async function getPostAsJson(link) {
 
 // A post contains a lot of stuff. This aims to find the comment of interest
 // Returns it as a json object.
-function findCommentInPostJson(dataAsJson) {
+function getCommentInPostDataJson(dataAsJson) {
 	const postComments = dataAsJson[1];
-	const commentBody = postComments.data.children[0].data.body;
-	return commentBody;
+	const commentData = postComments.data.children[0].data;
+	return commentData;
 }
