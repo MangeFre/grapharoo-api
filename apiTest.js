@@ -40,7 +40,13 @@ app.post('/url', async (req, res, next) => {
 		// Some fun properties in the comment.
 		const { subreddit_name_prefixed, score, author, body_html } = comment;
 
-		res.json({ url: trimmedLink, subreddit_name_prefixed, score, author, body_html });
+		res.json({
+			url: trimmedLink,
+			subreddit_name_prefixed,
+			score,
+			author,
+			body_html,
+		});
 	} catch (err) {
 		res.status(500).send(`Error: ${err}`);
 	}
@@ -79,10 +85,10 @@ function trimLink(link) {
 async function getPostAsJson(link) {
 	const trimmedLink = trimLink(link);
 	const jsonLink = trimmedLink + '.json';
+	console.log(jsonLink);
 	const response = await fetch(jsonLink, {
 		'Content-Type': 'application/json',
 	});
-
 	const data = response.json();
 	return data;
 }
