@@ -38,14 +38,15 @@ app.post('/url', async (req, res, next) => {
 		const trimmedLink = link.substring(0, link.indexOf(')'));
 
 		// Some fun properties in the comment.
-		const { subreddit_name_prefixed, score, author, body_html } = comment;
-
+		const { subreddit_name_prefixed, score, author, body_html, score_hidden, created_utc } = comment;
 		res.json({
 			url: trimmedLink,
 			subreddit_name_prefixed,
 			score,
 			author,
 			body_html,
+			score_hidden,
+			created_utc
 		});
 	} catch (err) {
 		res.status(500).send(`Error: ${err}`);
