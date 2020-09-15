@@ -86,7 +86,6 @@ function trimLink(link) {
 async function getPostAsJson(link) {
 	const trimmedLink = trimLink(link);
 	const jsonLink = trimmedLink + '.json';
-	console.log(jsonLink);
 	const response = await fetch(jsonLink, {
 		'Content-Type': 'application/json',
 	});
