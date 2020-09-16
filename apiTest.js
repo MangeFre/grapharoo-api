@@ -27,7 +27,11 @@ app.post('/url', async (req, res, next) => {
 		const comment = getCommentInPostDataJson(data);
 
 		// This is just the text of the comment - perfect to extract the next link from.
-		const commentBody = comment.body;
+		let commentBody = comment.body;
+
+		// Sanitize out newline characters.
+		commentBody = commentBody.replace(/(\r\n|\n|\r)/gm, '');
+
 		const indexOfHttp = commentBody.indexOf('(http');
 		// Don't want the ( so we add one.
 		const link =
@@ -38,7 +42,14 @@ app.post('/url', async (req, res, next) => {
 		const trimmedLink = link.substring(0, link.indexOf(')'));
 
 		// Some fun properties in the comment.
-		const { subreddit_name_prefixed, score, author, body_html, score_hidden, created_utc } = comment;
+		const {
+			subreddit_name_prefixed,
+			score,
+			author,
+			body_html,
+			score_hidden,
+			created_utc,
+		} = comment;
 		res.json({
 			url: trimmedLink,
 			subreddit_name_prefixed,
@@ -46,7 +57,7 @@ app.post('/url', async (req, res, next) => {
 			author,
 			body_html,
 			score_hidden,
-			created_utc
+			created_utc,
 		});
 	} catch (err) {
 		res.status(500).send(`Error: ${err}`);
