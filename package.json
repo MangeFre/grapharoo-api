@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node ./apiTest.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon -w ./apiTest.js"
+    "dev": "nodemon -w ./apiTest.js",
+    "cycleTest": "node apiCycleMock.js"
   },
   "repository": {
     "type": "git",
