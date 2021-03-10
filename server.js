@@ -9,7 +9,7 @@ try {
 	mongoose.connect(process.env.DATABASE, { useNewUrlParser: true });
 	console.log('Connected to DB successfully.');
 } catch (err) {
-	console.log(`Error connection!!!!! -> ${err.message}`);
+	console.log(`Error connecting!!!!!! -> ${err.message}`);
 }
 mongoose.Promise = global.Promise; // Tell Mongoose to use ES6 promises
 mongoose.connection.on('error', (err) => {
