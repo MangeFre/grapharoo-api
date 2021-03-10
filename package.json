@@ -30,6 +30,7 @@
     "node-fetch": "^2.6.1"
   },
   "devDependencies": {
-    "nodemon": "^2.0.4"
+    "nodemon": "^2.0.4",
+    "mocha": "^8.3.1"
   }
 }
