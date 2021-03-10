@@ -4,7 +4,7 @@
   "description": "The API of the Grapharoo project",
   "main": "apiTest.js",
   "scripts": {
-    "start": "node ./apiTest.js",
+    "start": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon -w ./apiTest.js",
     "cycleTest": "node apiCycleMock.js"
