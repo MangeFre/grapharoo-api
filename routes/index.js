@@ -1,7 +1,7 @@
 const express = require('express');
-const app = require('../app');
-const { catchErrors } = require('../handlers/errorHandler');
 const router = express.Router();
+const linkController = require('../controllers/linkController');
 
+router.get('/link/next', linkController.handleNextLinkReq);
 
-app.get('/link/next', catchErrors(linkController.handleNextLinkReq))
+module.exports = router;
