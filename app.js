@@ -4,4 +4,8 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 
 const app = express();
+
+// Says deprecated - is not.
+app.use(bodyParser.json());
+
 module.exports = app;
