@@ -9,27 +9,61 @@ const expect = chai.expect;
 require('dotenv').config({ path: '../.env' });
 const url = `localhost:${process.env.TEST_PORT || 7777}`;
 
-describe('Testing the suite, and a simple sample repsonse from server', () => {
-	it('Expecting response type JSON', (done) => {
+describe('Testing the GET link/next route', () => {
+	it("Response includes a 'link' object", (done) => {
 		chai
 			.request(url)
 			.get('/link/next')
-			.send()
+			.send({
+				url: 'https://www.reddit.com/r/aww/comments/hd6xtp/comment/fvk5vao',
+			})
 			.end((err, res) => {
-				expect(err).to.be.null;
-				expect(res).to.be.json;
+				expect(res?.body?.link).deep.not.to.be.an('undefined');
 				done();
 			});
 	});
 
-	it('Expecting response object to say that it works', (done) => {
+	it("Response includes a 'next' object", (done) => {
 		chai
 			.request(url)
 			.get('/link/next')
-			.send()
+			.send({
+				url: 'https://www.reddit.com/r/aww/comments/hd6xtp/comment/fvk5vao',
+			})
 			.end((err, res) => {
-				expect(res.body).to.deep.equal({ works: true });
-				done();
+				expect(res?.body?.next).deep.not.to.be.an('undefined');
+				done(err);
 			});
 	});
+
+	it('Testing a valid link, expecting the next link in response', (done) => {
+		chai
+			.request(url)
+			.get('/link/next')
+			.send({
+				url: 'https://www.reddit.com/r/aww/comments/hd6xtp/comment/fvk5vao',
+			})
+			.end((err, res) => {
+				expect(res?.body?.next?.url).to.equal(
+					'https://reddit.com/r/pics/comments/hd4tek/comment/fvjpc68',
+				);
+				done(err);
+			});
+	});
+
+	// it('Testing with context, expecting the next link in response', (done) => {
+	// 	chai
+	// 		.request(url)
+	// 		.get('/link/next')
+	// 		.send({
+	// 			url:
+	// 				'https://www.reddit.com/r/aww/comments/hd6xtp/comment/fvk5vao?context=3',
+	// 		})
+	// 		.end((err, res) => {
+	// 			expect(res?.body?.next?.url).to.equal(
+	// 				'https://www.reddit.com/r/pics/comments/hd4tek/we_were_stuck_in_costa_rica_for_3_months_so_we/fvjpc68',
+	// 			);
+	// 			done(err);
+	// 		});
+	// });
 });
