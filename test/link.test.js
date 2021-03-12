@@ -1,5 +1,6 @@
 const chai = require('chai');
 const chatHttp = require('chai-http');
+const normalize = require('normalize-url');
 chai.use(chatHttp);
 
 // Shorthands (reduce the time we have to type 'chai')
@@ -51,19 +52,37 @@ describe('Testing the GET link/next route', () => {
 			});
 	});
 
-	// it('Testing with context, expecting the next link in response', (done) => {
-	// 	chai
-	// 		.request(url)
-	// 		.get('/link/next')
-	// 		.send({
-	// 			url:
-	// 				'https://www.reddit.com/r/aww/comments/hd6xtp/comment/fvk5vao?context=3',
-	// 		})
-	// 		.end((err, res) => {
-	// 			expect(res?.body?.next?.url).to.equal(
-	// 				'https://www.reddit.com/r/pics/comments/hd4tek/we_were_stuck_in_costa_rica_for_3_months_so_we/fvjpc68',
-	// 			);
-	// 			done(err);
-	// 		});
-	// });
+	it('Testing with context, expecting the next link in response', (done) => {
+		chai
+			.request(url)
+			.get('/link/next')
+			.send({
+				url:
+					'https://www.reddit.com/r/aww/comments/hd6xtp/comment/fvk5vao?context=3',
+			})
+			.end((err, res) => {
+				expect(res?.body?.next?.url).to.equal(
+					'https://reddit.com/r/pics/comments/hd4tek/comment/fvjpc68',
+				);
+				done(err);
+			});
+	});
+
+	it('Testing the original url being sent back has been normalized.', (done) => {
+		chai
+			.request(url)
+			.get('/link/next')
+			.send({
+				url:
+					'https://www.reddit.com/r/aww/comments/hd6xtp/comment/fvk5vao?context=3',
+			})
+			.end((err, res) => {
+				expect(res?.body?.link?.url).to.equal(
+					normalize(
+						'https://www.reddit.com/r/aww/comments/hd6xtp/comment/fvk5vao?context=3',
+					),
+				);
+				done();
+			});
+	});
 });

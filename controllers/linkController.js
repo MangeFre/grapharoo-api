@@ -1,5 +1,13 @@
 const getUrls = require('get-urls');
 const fetch = require('node-fetch');
+const normalize = require('normalize-url');
+
+exports.normalizeUrl = (req, res, next) => {
+	const urlToNormalize = req.body.url;
+	const normalized = normalize(urlToNormalize, { forceHttps: true });
+	req.body.url = normalized;
+	next();
+};
 
 exports.handleNextLinkReq = async (req, res) => {
 	const url = new URL(req.body.url);
