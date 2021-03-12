@@ -1,6 +1,5 @@
 const chai = require('chai');
 const chatHttp = require('chai-http');
-const normalize = require('normalize-url');
 chai.use(chatHttp);
 
 // Shorthands (reduce the time we have to type 'chai')
@@ -10,13 +9,39 @@ const expect = chai.expect;
 require('dotenv').config({ path: '../.env' });
 const url = `localhost:${process.env.TEST_PORT || 7777}`;
 
-describe('Testing the GET link/next route', () => {
+const testURL = 'https://www.reddit.com/r/aww/comments/hd6xtp/comment/fvk5vao';
+
+describe('Testing the GET link/next route', function () {
+	it("Link has not been seen - Seen should be 'false'", (done) => {
+		chai
+			.request(url)
+			.get('/link/next')
+			.send({ url: testURL })
+			.end((err, res) => {
+				expect(res?.body?.seen).to.be.false;
+				done();
+			});
+	});
+
+	it("Testing that link that has been seen is sent back as 'seen'.", (done) => {
+		chai
+			.request(url)
+			.get('/link/next')
+			.send({
+				url: `${testURL}?context=3`,
+			})
+			.end((err, res) => {
+				expect(res?.body?.seen).to.be.true;
+				done();
+			});
+	});
+
 	it("Response includes a 'link' object", (done) => {
 		chai
 			.request(url)
 			.get('/link/next')
 			.send({
-				url: 'https://www.reddit.com/r/aww/comments/hd6xtp/comment/fvk5vao',
+				url: testURL,
 			})
 			.end((err, res) => {
 				expect(res?.body?.link).deep.not.to.be.an('undefined');
@@ -29,7 +54,7 @@ describe('Testing the GET link/next route', () => {
 			.request(url)
 			.get('/link/next')
 			.send({
-				url: 'https://www.reddit.com/r/aww/comments/hd6xtp/comment/fvk5vao',
+				url: testURL,
 			})
 			.end((err, res) => {
 				expect(res?.body?.next).deep.not.to.be.an('undefined');
@@ -42,7 +67,7 @@ describe('Testing the GET link/next route', () => {
 			.request(url)
 			.get('/link/next')
 			.send({
-				url: 'https://www.reddit.com/r/aww/comments/hd6xtp/comment/fvk5vao',
+				url: testURL,
 			})
 			.end((err, res) => {
 				expect(res?.body?.next?.url).to.equal(
@@ -57,32 +82,13 @@ describe('Testing the GET link/next route', () => {
 			.request(url)
 			.get('/link/next')
 			.send({
-				url:
-					'https://www.reddit.com/r/aww/comments/hd6xtp/comment/fvk5vao?context=3',
+				url: `${testURL}?context=3`,
 			})
 			.end((err, res) => {
 				expect(res?.body?.next?.url).to.equal(
 					'https://reddit.com/r/pics/comments/hd4tek/comment/fvjpc68',
 				);
 				done(err);
-			});
-	});
-
-	it('Testing the original url being sent back has been normalized.', (done) => {
-		chai
-			.request(url)
-			.get('/link/next')
-			.send({
-				url:
-					'https://www.reddit.com/r/aww/comments/hd6xtp/comment/fvk5vao?context=3',
-			})
-			.end((err, res) => {
-				expect(res?.body?.link?.url).to.equal(
-					normalize(
-						'https://www.reddit.com/r/aww/comments/hd6xtp/comment/fvk5vao?context=3',
-					),
-				);
-				done();
 			});
 	});
 });
