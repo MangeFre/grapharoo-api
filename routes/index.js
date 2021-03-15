@@ -9,7 +9,10 @@ router.get('/', (req, res) => {
 router.get(
 	'/link/next',
 	linkController.normalizeUrl,
-	catchErrors(linkController.handleNextLinkReq),
+	linkController.attachLinkUrl,
+	catchErrors(linkController.findInDb),
+	catchErrors(linkController.fetchLinkData),
+	catchErrors(linkController.handleNextLink),
 );
 
 module.exports = router;

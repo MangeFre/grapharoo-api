@@ -11,13 +11,18 @@ exports.normalizeUrl = (req, res, next) => {
 	next();
 };
 
-exports.handleNextLinkReq = async (req, res) => {
+exports.attachLinkUrl = (req, res, next) => {
 	const url = new URL(req.body.url);
 	const linkUrl = url.origin + url.pathname;
+	req.body.linkUrl = linkUrl;
+	console.log(req.body.linkUrl);
+	next();
+};
 
+exports.findInDb = async (req, res, next) => {
+	console.log(req.body.linkUrl);
+	const linkUrl = req.body.linkUrl;
 	const existingLink = await Link.findOne({ link: { url: linkUrl } });
-
-	// If this is in our DB, don't ping reddit, just retrieve the DB entry
 	if (existingLink) {
 		const { link, next } = existingLink;
 		res.json({
@@ -27,16 +32,29 @@ exports.handleNextLinkReq = async (req, res) => {
 		});
 		return;
 	}
+	next();
+};
 
-	const redditDataRaw = await fetch(linkUrl + '.json', {
+exports.fetchLinkData = async (req, res, next) => {
+	const response = await fetch(req.body.linkUrl + '.json', {
 		'Content-Type': 'application/json',
 	});
-	const redditData = await redditDataRaw.json();
-	const commentData = redditData[1].data.children[0].data;
+
+	if (response.status !== 200) {
+		throw Error(`Unexpected status code: ${response.status}.`);
+	}
+
+	const data = await response.json();
+	req.body.data = data;
+	next();
+};
+
+exports.handleNextLink = async (req, res) => {
+	const commentData = req.body.data[1].data.children[0].data;
 	const nextRaw = new URL(Array.from(getUrls(commentData.body))[0]);
 	const nextUrl = nextRaw.origin + nextRaw.pathname;
 	const newLink = await new Link({
-		link: { url: linkUrl },
+		link: { url: req.body.linkUrl },
 		next: { url: nextUrl },
 	}).save();
 	const { link, next } = newLink;
