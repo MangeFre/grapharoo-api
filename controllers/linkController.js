@@ -13,27 +13,32 @@ exports.normalizeUrl = (req, res, next) => {
 
 exports.handleNextLinkReq = async (req, res) => {
 	const url = new URL(req.body.url);
-	const link = url.origin + url.pathname;
+	const linkUrl = url.origin + url.pathname;
 
-	const existingLink = await Link.findOne({ url: link });
+	const existingLink = await Link.findOne({ link: { url: linkUrl } });
 
 	// If this is in our DB, don't ping reddit, just retrieve the DB entry
 	if (existingLink) {
+		const { link, next } = existingLink;
 		res.json({
-			link: { url: existingLink.url },
-			next: { url: existingLink.next },
+			link,
+			next,
 			seen: true,
 		});
 		return;
 	}
 
-	const redditDataRaw = await fetch(link + '.json', {
+	const redditDataRaw = await fetch(linkUrl + '.json', {
 		'Content-Type': 'application/json',
 	});
 	const redditData = await redditDataRaw.json();
 	const commentData = redditData[1].data.children[0].data;
 	const nextRaw = new URL(Array.from(getUrls(commentData.body))[0]);
 	const nextUrl = nextRaw.origin + nextRaw.pathname;
-	const newLink = new Link({ url: link, next: nextUrl }).save();
-	res.json({ link: { url }, next: { url: nextUrl }, seen: false });
+	const newLink = await new Link({
+		link: { url: linkUrl },
+		next: { url: nextUrl },
+	}).save();
+	const { link, next } = newLink;
+	res.json({ link, next, seen: false });
 };
