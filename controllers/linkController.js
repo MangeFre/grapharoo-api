@@ -15,12 +15,10 @@ exports.attachLinkUrl = (req, res, next) => {
 	const url = new URL(req.body.url);
 	const linkUrl = url.origin + url.pathname;
 	req.body.linkUrl = linkUrl;
-	console.log(req.body.linkUrl);
 	next();
 };
 
 exports.findInDb = async (req, res, next) => {
-	console.log(req.body.linkUrl);
 	const linkUrl = req.body.linkUrl;
 	const existingLink = await Link.findOne({ link: { url: linkUrl } });
 	if (existingLink) {
@@ -41,7 +39,8 @@ exports.fetchLinkData = async (req, res, next) => {
 	});
 
 	if (response.status !== 200) {
-		throw Error(`Unexpected status code: ${response.status}.`);
+		next('The provided URL is not reachable');
+		return;
 	}
 
 	const data = await response.json();

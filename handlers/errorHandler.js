@@ -10,3 +10,7 @@ exports.catchErrors = (fn) => {
 		return fn(req, res, next).catch(next);
 	};
 };
+
+exports.catchInvalidLink = (err, req, res, next) => {
+	res.status(500).send('Something Broke!');
+};

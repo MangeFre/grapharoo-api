@@ -19,7 +19,7 @@ describe('Testing the GET link/next route', function () {
 			.send({ url: testURL })
 			.end((err, res) => {
 				expect(res?.body?.seen).to.be.false;
-				done();
+				done(err);
 			});
 	});
 
@@ -32,7 +32,7 @@ describe('Testing the GET link/next route', function () {
 			})
 			.end((err, res) => {
 				expect(res?.body?.seen).to.be.true;
-				done();
+				done(err);
 			});
 	});
 
@@ -45,7 +45,7 @@ describe('Testing the GET link/next route', function () {
 			})
 			.end((err, res) => {
 				expect(res?.body?.link).deep.not.to.be.an('undefined');
-				done();
+				done(err);
 			});
 	});
 
@@ -88,6 +88,28 @@ describe('Testing the GET link/next route', function () {
 				expect(res?.body?.next?.url).to.equal(
 					'https://reddit.com/r/pics/comments/hd4tek/comment/fvjpc68',
 				);
+				done(err);
+			});
+	});
+
+	it('Testing with a non-working link, return 500 status code', (done) => {
+		chai
+			.request(url)
+			.get('/link/next')
+			.send({ url: 'https://reddit.com/r/akfgwauifgweahyfshfkawhfka' })
+			.end((err, res) => {
+				expect(res.status).to.be.equal(500);
+				done(err);
+			});
+	});
+
+	it('Testing with a non-working link, return err message status code', (done) => {
+		chai
+			.request(url)
+			.get('/link/next')
+			.send({ url: 'https://reddit.com/r/akfgwauifgweahyfshfkawhfka' })
+			.end((err, res) => {
+				expect(res.error.text).to.be.equal('Something Broke!');
 				done(err);
 			});
 	});
