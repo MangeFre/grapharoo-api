@@ -144,4 +144,16 @@ describe('GET link/next route', function () {
 				done(err);
 			});
 	});
+
+	it('Storing time/date correctly', (done) => {
+		chai
+			.request(url)
+			.get('/link/next')
+			.send({ url: `${testURL}` })
+			.end((err, res) => {
+				const posted = res.body.link.data.created_utc;
+				expect(new Date(posted).toDateString()).to.include('2020');
+				done(err);
+			});
+	});
 });
