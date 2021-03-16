@@ -12,6 +12,9 @@ const url = `localhost:${process.env.TEST_PORT || 7777}`;
 const testURL = 'https://www.reddit.com/r/aww/comments/hd6xtp/comment/fvk5vao';
 
 describe('GET link/next route', function () {
+	// Avoid timeout from network calls. This affects the whole suite.
+	this.timeout(0);
+
 	it("Link has not been seen - Seen should be 'false'", (done) => {
 		chai
 			.request(url)
