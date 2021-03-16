@@ -5,9 +5,32 @@ const mongoose = require('mongoose');
 const Link = mongoose.model('Link');
 
 exports.normalizeUrl = (req, res, next) => {
-	const urlToNormalize = req.body.url;
-	const normalized = normalize(urlToNormalize, { forceHttps: true });
-	req.body.url = normalized;
+	try {
+		req.body.url = normalize(req.body.url, {
+			forceHttps: true,
+			stripWWW: true,
+		});
+	} catch (err) {
+		// The normalizeURL library throws errors, but this is more descriptive.
+		const myErr = new Error('The URL was not valid');
+		next(myErr);
+	}
+	next();
+};
+
+exports.validateLinkUrl = (req, res, next) => {
+	const url = new URL(req.body.url);
+	if (!url.hostname) {
+		const err = new Error('Did you submit an empty URL?');
+		next(err);
+		return;
+	}
+
+	if (url.hostname != 'reddit.com') {
+		const err = new Error(`${url} is not a valid domain.`);
+		next(err);
+		return;
+	}
 	next();
 };
 
@@ -39,7 +62,8 @@ exports.fetchLinkData = async (req, res, next) => {
 	});
 
 	if (response.status !== 200) {
-		next('The provided URL is not reachable');
+		const err = new Error(`${req.body.linkUrl} is not a valid grapharoo link.`);
+		next(err);
 		return;
 	}
 

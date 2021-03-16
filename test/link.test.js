@@ -11,7 +11,7 @@ const url = `localhost:${process.env.TEST_PORT || 7777}`;
 
 const testURL = 'https://www.reddit.com/r/aww/comments/hd6xtp/comment/fvk5vao';
 
-describe('Testing the GET link/next route', function () {
+describe('GET link/next route', function () {
 	it("Link has not been seen - Seen should be 'false'", (done) => {
 		chai
 			.request(url)
@@ -23,7 +23,7 @@ describe('Testing the GET link/next route', function () {
 			});
 	});
 
-	it("Testing that link that has been seen is sent back as 'seen'.", (done) => {
+	it("Link that has been seen is sent back as 'seen'.", (done) => {
 		chai
 			.request(url)
 			.get('/link/next')
@@ -62,7 +62,7 @@ describe('Testing the GET link/next route', function () {
 			});
 	});
 
-	it('Testing a valid link, expecting the next link in response', (done) => {
+	it('Valid link, expecting the next link in response', (done) => {
 		chai
 			.request(url)
 			.get('/link/next')
@@ -77,7 +77,7 @@ describe('Testing the GET link/next route', function () {
 			});
 	});
 
-	it('Testing with context, expecting the next link in response', (done) => {
+	it('Link with context, expecting the next link in response', (done) => {
 		chai
 			.request(url)
 			.get('/link/next')
@@ -92,7 +92,7 @@ describe('Testing the GET link/next route', function () {
 			});
 	});
 
-	it('Testing with a non-working link, return 500 status code', (done) => {
+	it('Non-working link, return 500 status code', (done) => {
 		chai
 			.request(url)
 			.get('/link/next')
@@ -103,13 +103,41 @@ describe('Testing the GET link/next route', function () {
 			});
 	});
 
-	it('Testing with a non-working link, return err message status code', (done) => {
+	it('Non-working link, return err message status code', (done) => {
 		chai
 			.request(url)
 			.get('/link/next')
 			.send({ url: 'https://reddit.com/r/akfgwauifgweahyfshfkawhfka' })
 			.end((err, res) => {
-				expect(res.error.text).to.be.equal('Something Broke!');
+				expect(res.error.text).to.be.equal(
+					'ERROR! Message: https://reddit.com/r/akfgwauifgweahyfshfkawhfka is not a valid grapharoo link.',
+				);
+				done(err);
+			});
+	});
+
+	it('Incorrect domain.', (done) => {
+		chai
+			.request(url)
+			.get('/link/next')
+			.send({ url: 'https://youtube.com/' })
+			.end((err, res) => {
+				expect(res.error.text).to.be.equal(
+					'ERROR! Message: https://youtube.com/ is not a valid domain.',
+				);
+				done(err);
+			});
+	});
+
+	it('Empty link url.', (done) => {
+		chai
+			.request(url)
+			.get('/link/next')
+			.send({ url: '' })
+			.end((err, res) => {
+				expect(res.error.text).to.be.equal(
+					'ERROR! Message: The URL was not valid',
+				);
 				done(err);
 			});
 	});
