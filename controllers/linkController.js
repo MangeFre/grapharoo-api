@@ -43,7 +43,9 @@ exports.attachLinkUrl = (req, res, next) => {
 
 exports.findInDb = async (req, res, next) => {
 	const linkUrl = req.body.linkUrl;
-	const existingLink = await Link.findOne({ link: { url: linkUrl } });
+	// Good docs on why this query has to be like this.
+	// https://docs.mongodb.com/manual/tutorial/query-embedded-documents/#specify-equality-match-on-a-nested-field
+	const existingLink = await Link.findOne({ 'link.url': linkUrl });
 	if (existingLink) {
 		const { link, next } = existingLink;
 		res.json({
@@ -76,8 +78,26 @@ exports.handleNextLink = async (req, res) => {
 	const commentData = req.body.data[1].data.children[0].data;
 	const nextRaw = new URL(Array.from(getUrls(commentData.body))[0]);
 	const nextUrl = nextRaw.origin + nextRaw.pathname;
+	const {
+		subreddit_name_prefixed,
+		score,
+		author,
+		body_html,
+		score_hidden,
+		created_utc,
+	} = commentData;
 	const newLink = await new Link({
-		link: { url: req.body.linkUrl },
+		link: {
+			url: req.body.linkUrl,
+			data: {
+				subreddit_name_prefixed,
+				score,
+				author,
+				body_html,
+				score_hidden,
+				created_utc: new Date(created_utc),
+			},
+		},
 		next: { url: nextUrl },
 	}).save();
 	const { link, next } = newLink;
