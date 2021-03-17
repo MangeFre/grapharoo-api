@@ -6,7 +6,7 @@ const { catchErrors } = require('../handlers/errorHandler');
 router.get('/', (req, res) => {
 	res.send('The api is up and running!');
 });
-router.get(
+router.post(
 	'/link/next',
 	linkController.normalizeUrl,
 	linkController.validateLinkUrl,
