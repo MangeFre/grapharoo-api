@@ -6,12 +6,15 @@ The API of the Grapharoo project
 In this moment, the API can be run in your environment (hopefully). Just follow these steps.
 1. Open this in Visual Studio Code.
 2. Run NPM install to get all your dependencies.
-3. Run 'npm start' in the console. This will spit out a link.
-4. Copy said link and assign the variable "testLink" to it (found in the main function of test.js).
+3. For development, use the 'npm run dev' command. This will use nodemon to monitor important files and refresh the server if they change.
 
-Now repeat step 3 and you should get the next link. And so on...
+# How to test
 
-Let me know if it seems to break in some cases. Feel free to make any changes + restructure code (maybe rewrite test.js to a lib file or something along those lines).
+To run the test suite in the "test" folder, first make sure you have the api set up and running.
+1. Open a new terminal, leaving the other one open to keep the nodemon process alive.
+2. run 'npm test'
+
+The tests right now truly test the API in its full flow, from the request to the response. Therefor, you need a DB set up (the DB the API uses). If you do not have that, some tests will fail.
 
 ## ELI5: Ol' Reddit Switch-a-roo
 As the user CedarWolf [wrote in a response](https://www.reddit.com/r/explainlikeimfive/comments/17140d/eli5_ol_reddit_switcharoo/c8186iz?utm_source=share&utm_medium=web2x&context=3), 7 years ago:

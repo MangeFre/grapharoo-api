@@ -2,11 +2,11 @@
   "name": "grapharoo-api",
   "version": "1.0.0",
   "description": "The API of the Grapharoo project",
-  "main": "apiTest.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node ./apiTest.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon -w ./apiTest.js",
+    "start": "node server.js",
+    "test": "mocha test/**/*.test.js",
+    "dev": "nodemon --watch server.js --watch routes --watch models --watch handlers --watch controllers",
     "cycleTest": "node apiCycleMock.js"
   },
   "repository": {
@@ -26,9 +26,16 @@
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "node-fetch": "^2.6.0"
+    "get-urls": "^10.0.0",
+    "mongoose": "^5.12.0",
+    "node-fetch": "^2.6.1",
+    "normalize-url": "^5.3.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.4"
+    "chai": "^4.3.4",
+    "chai-http": "^4.3.0",
+    "mocha": "^8.3.2",
+    "nodemon": "^2.0.7",
+    "start-server-and-test": "^1.12.0"
   }
 }
