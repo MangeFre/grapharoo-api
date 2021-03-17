@@ -7,7 +7,7 @@ const expect = chai.expect;
 
 // Set up connection string to the test server.
 require('dotenv').config({ path: '../.env' });
-const url = `localhost:${process.env.TEST_PORT || 7777}`;
+const url = `localhost:${process.env.PORT || 3000}`;
 
 const testURL = 'https://www.reddit.com/r/aww/comments/hd6xtp/comment/fvk5vao';
 
