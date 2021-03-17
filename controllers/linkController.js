@@ -86,7 +86,6 @@ exports.handleNextLink = async (req, res) => {
 		score_hidden,
 		created_utc,
 	} = commentData;
-	console.log(created_utc);
 	const newLink = await new Link({
 		link: {
 			url: req.body.linkUrl,
