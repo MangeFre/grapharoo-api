@@ -1,7 +1,13 @@
 name: run-tests
-on: [pull_request]
+on: 
+  push:
+    branches-ignore:
+      [main, master]
+  pull_request:
+    branches:
+      [main, master]
 jobs:
-  set-up-server:
+  run-tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -21,13 +27,7 @@ jobs:
         run: | 
           npm start & 
           sleep 5 && 
-          npm test 
-          kill -9 $(lsof -ti:3000)
+          npm test
         env:
           DATABASE: mongodb://localhost:27017/grapharoo
-          PORT: 4000
-
-      - name: Run the run-tests
-        run: npm test
-        env:
           PORT: 4000
