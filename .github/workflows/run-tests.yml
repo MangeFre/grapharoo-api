@@ -21,7 +21,7 @@ jobs:
         run: | 
           npm start & 
           sleep 5 && 
-          npm test && 
+          npm test 
           kill -9 $(lsof -ti:3000)
         env:
           DATABASE: mongodb://localhost:27020
