@@ -1,0 +1,27 @@
+name: run-tests
+on: [pull_request]
+jobs:
+  set-up-server:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Start MongoDB locally
+        uses: supercharge/mongodb-github-action@1.3.0
+
+      - name: Install dependencies
+        run: npm install
+      
+      - name: Run the node.js server
+        run: npm start
+        env:
+          DATABASE: mongodb://localhost:27020
+          PORT: 4000
+
+      - name: Run the run-tests
+        run: npm test
+        env:
+          PORT: 4000
