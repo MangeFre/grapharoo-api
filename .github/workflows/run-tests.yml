@@ -20,7 +20,7 @@ jobs:
       - name: Run the node.js server
         run: npm start
         env:
-          DATABASE: mongodb://localhost:27020
+          DATABASE: mongodb://localhost:27020/grapharoo
           PORT: 4000
 
       - name: Run the run-tests
