@@ -24,7 +24,7 @@ jobs:
           npm test 
           kill -9 $(lsof -ti:3000)
         env:
-          DATABASE: mongodb://localhost:27020
+          DATABASE: mongodb://localhost:27020/grapharoo
           PORT: 4000
 
       - name: Run the run-tests
