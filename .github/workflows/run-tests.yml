@@ -8,7 +8,20 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '14'
-      - run: npm install
-      - run: npm start
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.3.0
+      
+      - name: Run the node.js server
+        run: npm start
         env:
           DATABASE: mongodb://localhost:27020
+          PORT: 4000
+
+      - name: Run the run-tests
+        run: npm test
+        env:
+          PORT: 4000
