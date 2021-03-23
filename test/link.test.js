@@ -115,7 +115,7 @@ describe('POST link/next route', function () {
 			.send({ url: 'https://reddit.com/r/akfgwauifgweahyfshfkawhfka' })
 			.end((err, res) => {
 				expect(res.error.text).to.be.equal(
-					'ERROR! Message: https://reddit.com/r/akfgwauifgweahyfshfkawhfka is not a valid grapharoo link.',
+					'ERROR! Message: https://reddit.com/r/akfgwauifgweahyfshfkawhfka is not a valid grapharoo link',
 				);
 				done(err);
 			});
@@ -128,7 +128,7 @@ describe('POST link/next route', function () {
 			.send({ url: 'https://youtube.com/' })
 			.end((err, res) => {
 				expect(res.error.text).to.be.equal(
-					'ERROR! Message: https://youtube.com/ is not a valid domain.',
+					'ERROR! Message: https://www.youtube.com/ is not a valid domain',
 				);
 				done(err);
 			});
@@ -162,7 +162,7 @@ describe('POST link/next route', function () {
 	it("Redirecting link will go to the final destination and return the same 'next' as original link", (done) => {
 		chai
 			.request(url)
-			.port('/link/next')
+			.post('/link/next')
 			.send({ url: `${testRedirectURL}` })
 			.end((err, res) => {
 				expect(res?.body?.next?.url).to.equal(
@@ -179,7 +179,7 @@ describe('POST link/next route', function () {
 			.send({ url: 'https://sv.facebook.com' })
 			.end((err, res) => {
 				expect(res.error.text).to.be.equal(
-					'ERROR! Message: https://facebook.com/ is not a valid domain.',
+					'ERROR! Message: https://www.facebook.com/ is not a valid domain',
 				);
 				done(err);
 			});

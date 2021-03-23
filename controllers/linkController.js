@@ -17,19 +17,24 @@ exports.normalizeUrl = (req, res, next) => {
 	next();
 };
 
-exports.validateLinkUrl = (req, res, next) => {
-	const url = new URL(req.body.url);
-	if (!url.hostname) {
-		const err = new Error('Did you submit an empty URL?');
-		next(err);
+exports.validateLinkUrl = async (req, res, next) => {
+	try {
+		const peek = await fetch(req.body.url, { method: 'HEAD' });
+		const finalURL = peek.url;
+		const url = new URL(finalURL);
+
+		// The final URL hostname should always be reddit.com
+		if (!url.hostname.includes('reddit.com')) {
+			const err = new Error(`${url} is not a valid domain`);
+			next(err);
+			return;
+		}
+	} catch (err) {
+		const err2 = new Error('Error trying to peek at submitted url')
+		next(err2);
 		return;
 	}
 
-	if (url.hostname != 'reddit.com') {
-		const err = new Error(`${url} is not a valid domain.`);
-		next(err);
-		return;
-	}
 	next();
 };
 
@@ -63,7 +68,7 @@ exports.fetchLinkData = async (req, res, next) => {
 	});
 
 	if (response.status !== 200) {
-		const err = new Error(`${req.body.linkUrl} is not a valid grapharoo link.`);
+		const err = new Error(`${req.body.linkUrl} is not a valid grapharoo link`);
 		next(err);
 		return;
 	}
