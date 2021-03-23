@@ -10,6 +10,8 @@ require('dotenv').config({ path: '../.env' });
 const url = `http://localhost:${process.env.PORT || 3000}`;
 
 const testURL = 'https://www.reddit.com/r/aww/comments/hd6xtp/comment/fvk5vao';
+const testRedirectURL =
+	'https://aww.reddit.com/comments/hd6xtp/comment/fvk5vao';
 
 describe('POST link/next route', function () {
 	// Avoid timeout from network calls. This affects the whole suite.
@@ -113,7 +115,7 @@ describe('POST link/next route', function () {
 			.send({ url: 'https://reddit.com/r/akfgwauifgweahyfshfkawhfka' })
 			.end((err, res) => {
 				expect(res.error.text).to.be.equal(
-					'ERROR! Message: https://reddit.com/r/akfgwauifgweahyfshfkawhfka is not a valid grapharoo link.',
+					'ERROR! Message: https://reddit.com/r/akfgwauifgweahyfshfkawhfka is not a valid grapharoo link',
 				);
 				done(err);
 			});
@@ -126,7 +128,7 @@ describe('POST link/next route', function () {
 			.send({ url: 'https://youtube.com/' })
 			.end((err, res) => {
 				expect(res.error.text).to.be.equal(
-					'ERROR! Message: https://youtube.com/ is not a valid domain.',
+					'ERROR! Message: https://www.youtube.com/ is not a valid domain',
 				);
 				done(err);
 			});
@@ -153,6 +155,32 @@ describe('POST link/next route', function () {
 			.end((err, res) => {
 				const posted = res.body.link.data.created_utc;
 				expect(new Date(posted).toDateString()).to.include('2020');
+				done(err);
+			});
+	});
+
+	it("Redirecting link will go to the final destination and return the same 'next' as original link", (done) => {
+		chai
+			.request(url)
+			.post('/link/next')
+			.send({ url: `${testRedirectURL}` })
+			.end((err, res) => {
+				expect(res?.body?.next?.url).to.equal(
+					'https://reddit.com/r/pics/comments/hd4tek/comment/fvjpc68',
+				);
+				done(err);
+			});
+	});
+
+	it('Redirecting link to an invalid host should result in same error as other incorrect link', (done) => {
+		chai
+			.request(url)
+			.post('/link/next')
+			.send({ url: 'https://sv.facebook.com' })
+			.end((err, res) => {
+				expect(res.error.text).to.be.equal(
+					'ERROR! Message: https://www.facebook.com/ is not a valid domain',
+				);
 				done(err);
 			});
 	});
