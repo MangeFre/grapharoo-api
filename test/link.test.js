@@ -171,4 +171,17 @@ describe('POST link/next route', function () {
 				done(err);
 			});
 	});
+
+	it('Redirecting link to an invalid host should result in same error as other incorrect link', (done) => {
+		chai
+			.request(url)
+			.post('/link/next')
+			.send({ url: 'https://sv.facebook.com' })
+			.end((err, res) => {
+				expect(res.error.text).to.be.equal(
+					'ERROR! Message: https://facebook.com/ is not a valid domain.',
+				);
+				done(err);
+			});
+	});
 });
