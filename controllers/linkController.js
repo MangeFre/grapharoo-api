@@ -8,7 +8,6 @@ exports.normalizeUrl = (req, res, next) => {
 	try {
 		req.body.url = normalize(req.body.url, {
 			forceHttps: true,
-			stripWWW: true,
 		});
 	} catch (err) {
 		// The normalizeURL library throws errors, but this is more descriptive.
