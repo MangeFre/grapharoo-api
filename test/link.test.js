@@ -12,6 +12,7 @@ const url = `http://localhost:${process.env.PORT || 3000}`;
 const testURL = 'https://www.reddit.com/r/aww/comments/hd6xtp/comment/fvk5vao';
 const testRedirectURL =
 	'https://aww.reddit.com/comments/hd6xtp/comment/fvk5vao';
+const testOldRedditURL = 'https://old.reddit.com/r/aww/comments/hd6xtp/comment/fvk5vao'
 
 describe('POST link/next route', function () {
 	// Avoid timeout from network calls. This affects the whole suite.
@@ -181,6 +182,20 @@ describe('POST link/next route', function () {
 				expect(res.error.text).to.be.equal(
 					'ERROR! Message: https://www.facebook.com/ is not a valid domain',
 				);
+				done(err);
+			});
+	});
+
+	it('Redirecting old.reddit.com to a link that has been seen.', (done) => {
+		chai
+			.request(url)
+			.post('/link/next')
+			.send({ url: `${testOldRedditURL}` })
+			.end((err, res) => {
+				expect(res?.body?.next?.url).to.equal(
+					'https://reddit.com/r/pics/comments/hd4tek/comment/fvjpc68',
+				);
+				expect(res.body.seen).to.be.true;
 				done(err);
 			});
 	});
