@@ -1,6 +1,7 @@
 const chai = require('chai');
 const chatHttp = require('chai-http');
 chai.use(chatHttp);
+const normalize = require('normalize-url');
 
 // Shorthands (reduce the time we have to type 'chai')
 const expect = chai.expect;
@@ -12,7 +13,8 @@ const url = `http://localhost:${process.env.PORT || 3000}`;
 const testURL = 'https://www.reddit.com/r/aww/comments/hd6xtp/comment/fvk5vao';
 const testRedirectURL =
 	'https://aww.reddit.com/comments/hd6xtp/comment/fvk5vao';
-const testOldRedditURL = 'https://old.reddit.com/r/aww/comments/hd6xtp/comment/fvk5vao'
+const testOldRedditURL =
+	'https://old.reddit.com/r/aww/comments/hd6xtp/comment/fvk5vao';
 
 describe('POST link/next route', function () {
 	// Avoid timeout from network calls. This affects the whole suite.
@@ -194,6 +196,20 @@ describe('POST link/next route', function () {
 			.end((err, res) => {
 				expect(res?.body?.next?.url).to.equal(
 					'https://reddit.com/r/pics/comments/hd4tek/comment/fvjpc68',
+				);
+				expect(res.body.seen).to.be.true;
+				done(err);
+			});
+	});
+
+	it('The Final URL is the one stored in the DB', (done) => {
+		chai
+			.request(url)
+			.post('/link/next')
+			.send({ url: `${testRedirectURL}` })
+			.end((err, res) => {
+				expect(res.body.link.url).to.equal(
+					`${normalize(testURL, { stripWWW: true })}`,
 				);
 				expect(res.body.seen).to.be.true;
 				done(err);
