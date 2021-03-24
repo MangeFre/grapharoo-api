@@ -6,11 +6,17 @@ require('dotenv').config({ path: '.env' });
 // TODO in future - if deployed, set up logic to not use the deployed db for testing
 let port = process.env.PORT || 3000;
 
+// ONLY CONNECT TO PROD if PROD is specified in .env
+const production = process.env.PROD == 'true';
+const dbConnection = production
+	? process.env.DATABASE
+	: process.env.TEST_DATABASE;
+
 // Connect to our Database and handle any bad connections
 mongoose.set('useUnifiedTopology', true);
 try {
-	mongoose.connect(process.env.DATABASE, { useNewUrlParser: true });
-	console.log('Connected to DB successfully.');
+	mongoose.connect(dbConnection, { useNewUrlParser: true });
+	console.log(`Connected to DB at ${dbConnection}`);
 } catch (err) {
 	console.log(`Error connecting!!!!!! -> ${err.message}`);
 }
