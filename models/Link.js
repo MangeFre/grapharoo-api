@@ -1,5 +1,13 @@
 const mongoose = require('mongoose');
 
+function getPostAndCommentId(fullUrl) {
+	const destructuredURL = new URL(fullUrl);
+	const path = destructuredURL.pathname;
+	const trimmed = path.slice(path.indexOf('comments/'));
+	const allParameters = trimmed.split('/');
+	return [allParameters[1], allParameters[3]];
+}
+
 const linkSchema = mongoose.Schema({
 	link: {
 		url: {
@@ -44,12 +52,23 @@ const linkSchema = mongoose.Schema({
 	trees: [mongoose.ObjectId],
 });
 
+linkSchema.pre('findOne', function () {
+	// 'This' is the QUERY object
+	if (Object.keys(this._conditions).includes('link.url')) {
+		const [post_id, comment_id] = getPostAndCommentId(
+			this._conditions['link.url'],
+		);
+		this._conditions = {
+			'link.structured.post_id': post_id,
+			'link.structured.comment_id': comment_id,
+		};
+	}
+});
+
 linkSchema.pre('save', function () {
-	const destructuredURL = new URL(this.link.url);
-	const path = destructuredURL.pathname;
-	const trimmed = path.slice(path.indexOf('comments/'));
-	const allParameters = trimmed.split('/');
-	const [post_id, comment_id] = [allParameters[1], allParameters[3]];
+	const path = new URL(this.link.url).pathname
+	const [post_id, comment_id] = getPostAndCommentId(this.link.url);
+	// 'This' is the document being saved.
 	this.link.structured.path = path;
 	this.link.structured.post_id = post_id;
 	this.link.structured.comment_id = comment_id;
