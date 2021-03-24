@@ -52,6 +52,11 @@ const linkSchema = mongoose.Schema({
 	trees: [mongoose.ObjectId],
 });
 
+linkSchema.index({
+	'link.structured.post_id': 1,
+	'link.structured.comment_id': 1,
+});
+
 linkSchema.pre('findOne', function () {
 	// 'This' is the QUERY object
 	if (Object.keys(this._conditions).includes('link.url')) {
@@ -66,7 +71,7 @@ linkSchema.pre('findOne', function () {
 });
 
 linkSchema.pre('save', function () {
-	const path = new URL(this.link.url).pathname
+	const path = new URL(this.link.url).pathname;
 	const [post_id, comment_id] = getPostAndCommentId(this.link.url);
 	// 'This' is the document being saved.
 	this.link.structured.path = path;
