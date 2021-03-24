@@ -30,7 +30,7 @@ exports.validateLinkUrl = async (req, res, next) => {
 			return;
 		}
 	} catch (err) {
-		const err2 = new Error('Error trying to peek at submitted url')
+		const err2 = new Error('Error trying to peek at submitted url');
 		next(err2);
 		return;
 	}
