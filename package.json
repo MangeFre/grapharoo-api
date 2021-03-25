@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "test": "mocha test/**/*.test.js",
+    "test": "npm start & sleep 3 && mocha test/**/*.test.js",
     "dev": "nodemon --watch server.js --watch routes --watch models --watch handlers --watch controllers",
     "cycleTest": "node apiCycleMock.js"
   },
