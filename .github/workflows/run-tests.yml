@@ -22,10 +22,7 @@ jobs:
         run: npm install
       
       - name: Run the node.js server and test
-        run: | 
-          npm start & 
-          sleep 5 && 
-          npm test
+        run: npm test
         env:
           TEST_DATABASE: mongodb://localhost:27017/
           PORT: 4000
