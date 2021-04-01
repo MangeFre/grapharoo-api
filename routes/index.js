@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const linkController = require('../controllers/linkController');
+const linkgraphController = require('../controllers/linkgraphController');
 const { catchErrors } = require('../handlers/errorHandler');
 
 router.get('/', (req, res) => {
@@ -15,5 +16,7 @@ router.post(
 	catchErrors(linkController.fetchLinkData),
 	catchErrors(linkController.handleNextLink),
 );
+
+router.get('/linkgraph', linkgraphController.getLinkgraph);
 
 module.exports = router;
