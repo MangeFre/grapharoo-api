@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const linkController = require('../controllers/linkController');
+const fixController = require('../controllers/fixController');
 const linkgraphController = require('../controllers/linkgraphController');
 const { catchErrors } = require('../handlers/errorHandler');
 
@@ -16,6 +17,15 @@ router.post(
 	catchErrors(linkController.fetchLinkData),
 	catchErrors(linkController.handleNextLink),
 );
+
+router.post('/link/fix', 
+	fixController.copyFixToUrlProperty,
+	linkController.normalizeUrl,
+	linkController.validateLinkUrl,
+	linkController.attachLinkUrl,
+	catchErrors(linkController.fetchLinkData),
+	catchErrors(fixController.updateExistingLinkAndSendResponse),
+)
 
 router.get('/linkgraph', linkgraphController.getLinkgraph);
 
