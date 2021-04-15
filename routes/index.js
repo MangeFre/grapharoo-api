@@ -18,14 +18,18 @@ router.post(
 	catchErrors(linkController.handleNextLink),
 );
 
-router.post('/link/fix', 
+router.post(
+	'/link/fix',
+	fixController.validateFixRequest,
 	fixController.copyFixToUrlProperty,
 	linkController.normalizeUrl,
 	linkController.validateLinkUrl,
 	linkController.attachLinkUrl,
+	catchErrors(fixController.checkIfFixedBefore),
+	catchErrors(fixController.checkBrokenLinkIsBroken),
 	catchErrors(linkController.fetchLinkData),
 	catchErrors(fixController.updateExistingLinkAndSendResponse),
-)
+);
 
 router.get('/linkgraph', linkgraphController.getLinkgraph);
 
