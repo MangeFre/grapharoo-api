@@ -6,4 +6,8 @@ const fixSchema = mongoose.Schema({
 	fixed: String,
 });
 
+fixSchema.index({
+	'broken': 'text',
+});
+
 module.exports = mongoose.model('Fix', fixSchema);
