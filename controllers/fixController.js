@@ -5,17 +5,41 @@ const Fix = mongoose.model('Fix');
 const Link = mongoose.model('Link');
 
 // Change this over so that we can use existing normalization / sanitazion methods.
+exports.validateFixRequest = (req, res, next) => {
+	if (req.body.broken === undefined || req.body.fix === undefined) {
+		res.status(406).send('Missing links in request');
+		return;
+	}
+	next();
+};
+
 exports.copyFixToUrlProperty = (req, res, next) => {
-	if (req.body.fix === undefined)
-		throw new Error('Please submit a link to fix the broken one with.');
 	req.body.url = req.body.fix;
+	next();
+};
+
+exports.checkBrokenLinkIsBroken = async (req, res, next) => {
+	const exists = await Link.findOne({ 'link.url': req.body.url });
+	if (exists) {
+		res.status(406).send('Broken link is not broken');
+		return;
+	}
+	next();
+};
+
+exports.checkIfFixedBefore = async (req, res, next) => {
+	const fixedBefore = await Fix.findOne({ broken: req.body.url });
+	if (fixedBefore) {
+		res.status(409).send('This link has already been fixed before');
+		return;
+	}
 	next();
 };
 
 exports.updateExistingLinkAndSendResponse = async (req, res) => {
 	// Update old record with a fixed link
 	const beforeUpdate = await Link.findOneAndUpdate(
-		{ $text: {$search: req.body.broken} },
+		{ $text: { $search: req.body.broken } },
 		{ 'next.url': req.body.linkUrl },
 		{ returnOriginal: true },
 	);
