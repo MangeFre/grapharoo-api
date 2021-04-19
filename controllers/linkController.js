@@ -80,7 +80,11 @@ exports.fetchLinkData = async (req, res, next) => {
 
 exports.handleNextLink = async (req, res) => {
 	const commentData = req.body.data[1].data.children[0].data;
-	const nextRaw = new URL(Array.from(getUrls(commentData.body))[0]);
+	// Get an array of strings that look like urls
+	const urls = Array.from(getUrls(commentData.body));
+	// Find the first URL that contains the substring 'reddit.com'. This may need to be more advanced in the future
+	const redditUrl = urls.find((url) => url.includes('reddit.com'));
+	const nextRaw = new URL(redditUrl);
 	const nextUrl = nextRaw.origin + nextRaw.pathname;
 	const {
 		subreddit_name_prefixed,
