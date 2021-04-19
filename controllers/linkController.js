@@ -83,7 +83,7 @@ exports.handleNextLink = async (req, res) => {
 	// Get an array of strings that look like urls
 	const urls = Array.from(getUrls(commentData.body));
 	// Find the first URL that contains the substring 'reddit.com'. This may need to be more advanced in the future
-	const redditUrl = urls.find((url) => url.includes('reddit.com'));
+	const redditUrl = urls.length > 1 ? urls.find((url) => url.includes('reddit.com')) : urls[0];
 	const nextRaw = new URL(redditUrl);
 	const nextUrl = nextRaw.origin + nextRaw.pathname;
 	const {
