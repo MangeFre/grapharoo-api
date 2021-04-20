@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const fuzzy_search = require('mongoose-fuzzy-searching');
 
 function getPostAndCommentId(fullUrl) {
 	const destructuredURL = new URL(fullUrl);
