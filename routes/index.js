@@ -25,6 +25,7 @@ router.post(
 	linkController.normalizeUrl,
 	linkController.validateLinkUrl,
 	linkController.attachLinkUrl,
+	fixController.copyLinkUrlToFixProperty,
 	catchErrors(fixController.checkIfFixedBefore),
 	catchErrors(fixController.checkBrokenLinkIsBroken),
 	catchErrors(linkController.fetchLinkData),
