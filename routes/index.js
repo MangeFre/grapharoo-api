@@ -21,11 +21,6 @@ router.post(
 router.post(
 	'/link/fix',
 	fixController.validateFixRequest,
-	fixController.copyBrokenToUrlProperty,
-	linkController.normalizeUrl,
-	linkController.validateLinkUrl,
-	linkController.attachLinkUrl,
-	fixController.copyLinkUrlToBrokenProperty,
 	fixController.copyFixToUrlProperty,
 	linkController.normalizeUrl,
 	linkController.validateLinkUrl,

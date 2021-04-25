@@ -14,16 +14,6 @@ exports.validateFixRequest = (req, res, next) => {
 	next();
 };
 
-exports.copyBrokenToUrlProperty = (req, res, next) => {
-	req.body.url = req.body.broken;
-	next();
-}
-
-exports.copyLinkUrlToBrokenProperty = (req, res, next) => {
-	req.body.broken = req.body.linkUrl;
-	next();
-}
-
 exports.copyFixToUrlProperty = (req, res, next) => {
 	req.body.url = req.body.fix;
 	next();
