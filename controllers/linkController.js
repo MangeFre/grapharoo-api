@@ -2,6 +2,7 @@ const getUrls = require('get-urls');
 const fetch = require('node-fetch');
 const normalize = require('normalize-url');
 const mongoose = require('mongoose');
+const Fix = require('../models/Fix');
 const Link = mongoose.model('Link');
 
 exports.normalizeUrl = (req, res, next) => {
@@ -52,10 +53,14 @@ exports.findInDb = async (req, res, next) => {
 	const existingLink = await Link.findOne({ 'link.url': linkUrl });
 	if (existingLink) {
 		const { link, next } = existingLink;
+		let wasFixed = false;
+		if (await Fix.findOne({ fixed : req.body.linkUrl }))
+			wasFixed = true;
 		res.json({
 			link,
 			next,
 			seen: true,
+			fixed: wasFixed
 		});
 		return;
 	}
@@ -108,6 +113,9 @@ exports.handleNextLink = async (req, res) => {
 		},
 		next: { url: nextUrl },
 	}).save();
+	let wasFixed = false;
+	if (await Fix.findOne({ fixed : req.body.linkUrl }))
+		wasFixed = true;
 	const { link, next } = newLink;
-	res.json({ link, next, seen: false });
+	res.json({ link, next, seen: false, fixed: wasFixed });
 };
