@@ -21,13 +21,13 @@ router.post(
 router.post(
 	'/link/fix',
 	fixController.validateFixRequest,
+	catchErrors(fixController.checkBrokenLinkIsNotAlreadyInLinksAsValidLink),
 	fixController.copyFixToUrlProperty,
 	linkController.normalizeUrl,
 	linkController.validateLinkUrl,
 	linkController.attachLinkUrl,
 	fixController.copyLinkUrlToFixProperty,
 	catchErrors(fixController.checkIfFixedBefore),
-	catchErrors(fixController.checkBrokenLinkIsBroken),
 	catchErrors(linkController.fetchLinkData),
 	catchErrors(fixController.updateExistingLinkAndSendResponse),
 );
