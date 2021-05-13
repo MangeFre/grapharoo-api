@@ -14,6 +14,9 @@ const dbConnection = production
 
 // Connect to our Database and handle any bad connections
 mongoose.set('useUnifiedTopology', true);
+
+// See here: https://mongoosejs.com/docs/deprecations.html#findandmodify
+mongoose.set('useFindAndModify', false);
 try {
 	mongoose.connect(dbConnection, { useNewUrlParser: true });
 	console.log(`Connected to DB at ${dbConnection}`);
@@ -26,6 +29,7 @@ mongoose.connection.on('error', (err) => {
 });
 
 require('./models/Link');
+require('./models/Fix');
 
 const app = require('./app');
 const server = app.listen(port, () => {

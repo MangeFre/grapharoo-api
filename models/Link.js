@@ -57,6 +57,10 @@ linkSchema.index({
 	'link.structured.comment_id': 1,
 });
 
+linkSchema.index({
+	'next.url': 'text',
+});
+
 linkSchema.pre('findOne', function () {
 	// 'This' is the QUERY object
 	if (Object.keys(this._conditions).includes('link.url')) {

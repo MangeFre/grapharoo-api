@@ -7,7 +7,8 @@
     "start": "node server.js",
     "test": "npm start & sleep 3 && mocha test/**/*.test.js",
     "dev": "nodemon --watch server.js --watch routes --watch models --watch handlers --watch controllers",
-    "cycleTest": "node apiCycleMock.js"
+    "cycleTest": "node apiCycleMock.js",
+    "fix": "mocha test/fixModel.test.js"
   },
   "repository": {
     "type": "git",

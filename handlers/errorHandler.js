@@ -12,5 +12,5 @@ exports.catchErrors = (fn) => {
 };
 
 exports.catchInvalidLink = (err, req, res, next) => {
-	res.status(500).send(`ERROR! Message: ${err.message}`);
+	res.status(500).send({ errorMessage: `ERROR! Message: ${err.message}` });
 };
