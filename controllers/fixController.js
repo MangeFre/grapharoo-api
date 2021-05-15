@@ -99,7 +99,7 @@ exports.updateExistingLinkAndSendResponse = async (req, res) => {
 	if (existingLink !== null) {
 		newLink = existingLink;
 	} else {
-		const newLink = await new Link({
+		newLink = await new Link({
 			link: {
 				url: req.body.fix,
 				data: {
