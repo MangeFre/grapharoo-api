@@ -15,7 +15,7 @@ module.exports.getUrlsFromCommentBody = function(commentBody)  {
 module.exports.normalizeCommentBody = function(commentBody) {
     const escapedCommentBody = unescapeHTML(commentBody);
     const json = HTML.parse(escapedCommentBody);
-    replaceRelativeUrls(json[0], options);
+    replaceRelativeUrls(json[0]);
     newHTML = HTML.stringify(json);
     return newHTML;
 }
@@ -33,9 +33,8 @@ function replaceRelativeUrls(node) {
         return;
     }
 
-    if (node.type === 'tag' && options[node.name]) {
-        const allKeys = Object.keys(options[node.name]);
-        const href = allKeys.attrs.href;
+    if (node.type === 'tag' && node.name === 'a') {
+        const href = node.attrs.href;
         if (href && href.charAt(0) === '/') {
             const newUrl = 'reddit.com' + href;
             const normilizedUrl = normalize(newUrl, {forceHttps: true });
@@ -44,7 +43,7 @@ function replaceRelativeUrls(node) {
     }
 
     for (let child of node.children) {
-        replaceRelativeUrls(child, options);
+        replaceRelativeUrls(child);
     }
 
     return;
