@@ -8,12 +8,13 @@ const { catchErrors } = require('../handlers/errorHandler');
 router.get('/', (req, res) => {
 	res.send('The api is up and running!');
 });
+
 router.post(
 	'/link/next',
 	linkController.normalizeUrl,
-	linkController.validateLinkUrl,
 	linkController.attachLinkUrl,
 	catchErrors(linkController.findInDb),
+	linkController.validateLinkUrl,
 	catchErrors(linkController.fetchLinkData),
 	catchErrors(linkController.handleNextLink),
 );
@@ -21,13 +22,13 @@ router.post(
 router.post(
 	'/link/fix',
 	fixController.validateFixRequest,
+	catchErrors(fixController.checkBrokenLinkIsNotAlreadyInLinksAsValidLink),
 	fixController.copyFixToUrlProperty,
 	linkController.normalizeUrl,
 	linkController.validateLinkUrl,
 	linkController.attachLinkUrl,
 	fixController.copyLinkUrlToFixProperty,
 	catchErrors(fixController.checkIfFixedBefore),
-	catchErrors(fixController.checkBrokenLinkIsBroken),
 	catchErrors(linkController.fetchLinkData),
 	catchErrors(fixController.updateExistingLinkAndSendResponse),
 );

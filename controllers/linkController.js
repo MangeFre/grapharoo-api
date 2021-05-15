@@ -58,13 +58,15 @@ exports.findInDb = async (req, res, next) => {
 	if (existingLink) {
 		const { link, next } = existingLink;
 		let wasFixed = false;
-		if (await Fix.findOne({ fixed : req.body.linkUrl }))
+		const fixRecord = await Fix.findOne({ broken: req.body.linkUrl });
+		if (fixRecord) {
 			wasFixed = true;
+		}
 		res.json({
 			link,
 			next,
 			seen: true,
-			fixed: wasFixed
+			fixed: wasFixed,
 		});
 		return;
 	}
@@ -94,7 +96,14 @@ exports.handleNextLink = async (req, res) => {
 		// Get an array of strings that look like urls
 	const urls = Array.from(getUrls(commentData.body_html));
 	// Find the first URL that contains the substring 'reddit.com'. This may need to be more advanced in the future
-	const redditUrl = urls.length > 1 ? urls.find((url) => url.includes('reddit.com')) : urls[0];
+	const redditUrl =
+		urls.length > 1 ? urls.find((url) => url.includes('reddit.com')) : urls[0];
+	if (!redditUrl) {
+		res.status(500).json({
+			message: "Could not extract a 'next' link out of the comment",
+		});
+		return;
+	}
 	const nextRaw = new URL(redditUrl);
 	const nextUrl = nextRaw.origin + nextRaw.pathname;
 	const {
@@ -119,9 +128,13 @@ exports.handleNextLink = async (req, res) => {
 		},
 		next: { url: nextUrl },
 	}).save();
+
 	let wasFixed = false;
-	if (await Fix.findOne({ fixed : req.body.linkUrl }))
+	const fixRecord = await Fix.findOne({ broken: req.body.linkUrl });
+	if (fixRecord) {
 		wasFixed = true;
+	}
+
 	const { link, next } = newLink;
 	res.json({ link, next, seen: false, fixed: wasFixed });
 };
