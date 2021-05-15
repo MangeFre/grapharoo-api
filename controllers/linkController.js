@@ -4,9 +4,13 @@ const normalize = require('normalize-url');
 const mongoose = require('mongoose');
 const Fix = require('../models/Fix');
 const Link = mongoose.model('Link');
+const { normalizeCommentBody } = require('../common/linkHelpers');
 
 exports.normalizeUrl = (req, res, next) => {
 	try {
+		if (req.body.url.charAt(0) === '/') {
+			req.body.url = 'reddit.com' + req.body.url;
+		}
 		req.body.url = normalize(req.body.url, {
 			forceHttps: true,
 		});
@@ -85,8 +89,10 @@ exports.fetchLinkData = async (req, res, next) => {
 
 exports.handleNextLink = async (req, res) => {
 	const commentData = req.body.data[1].data.children[0].data;
-	// Get an array of strings that look like urls
-	const urls = Array.from(getUrls(commentData.body));
+	// Normalize Urls within the comment body
+	commentData.body_html = normalizeCommentBody(commentData.body_html);
+		// Get an array of strings that look like urls
+	const urls = Array.from(getUrls(commentData.body_html));
 	// Find the first URL that contains the substring 'reddit.com'. This may need to be more advanced in the future
 	const redditUrl = urls.length > 1 ? urls.find((url) => url.includes('reddit.com')) : urls[0];
 	const nextRaw = new URL(redditUrl);

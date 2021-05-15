@@ -1,9 +1,9 @@
 const getUrls = require('get-urls');
-const normalize = require('normalize-url');
 const fetch = require('node-fetch');
 const mongoose = require('mongoose');
 const Fix = mongoose.model('Fix');
 const Link = mongoose.model('Link');
+const { normalizeCommentBody } = require('../common/linkHelpers');
 
 // Change this over so that we can use existing normalization / sanitazion methods.
 exports.validateFixRequest = (req, res, next) => {
@@ -51,6 +51,8 @@ exports.updateExistingLinkAndSendResponse = async (req, res) => {
 		{ returnOriginal: true },
 	);
 	const commentData = req.body.data[1].data.children[0].data;
+	// Normalize Urls within the comment body
+	commentData.body_html = normalizeCommentBody(commentData.body_html);
 	// Get an array of strings that look like urls
 	const urls = Array.from(getUrls(commentData.body));
 	// Find the first URL that contains the substring 'reddit.com'. This may need to be more advanced in the future
