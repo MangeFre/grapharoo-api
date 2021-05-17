@@ -38,7 +38,7 @@ function replaceRelativeUrls(node) {
         if (href && href.charAt(0) === '/') {
             const newUrl = 'reddit.com' + href;
             const normilizedUrl = normalize(newUrl, {forceHttps: true });
-            allKeys.attrs.href = normilizedUrl;
+            node.attrs.href = normilizedUrl;
         }
     }
 
